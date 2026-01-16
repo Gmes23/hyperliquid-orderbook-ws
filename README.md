@@ -1,36 +1,176 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hyperliquid Order Book Widget
+
+A real-time cryptocurrency order book and trades viewer for Hyperliquid exchange, built with Next.js and TypeScript.
+
+## Features
+
+- **Real-time WebSocket Data**: Live order book and trade updates
+- **Multiple Assets**: Support for BTC and ETH perpetual contracts
+- **Price Grouping**: Adjustable price level aggregation (1, 2, 5, 10 for BTC / 0.1, 0.2, 0.5, 1 for ETH)
+- **Denomination Toggle**: View sizes in asset amount or USDC value
+- **Depth Visualization**: Visual bars showing cumulative order book depth
+- **Flash Animations**: Price level changes highlighted with smooth animations
+- **Trades View**: Real-time trade feed with buy/sell indicators
+- **Responsive Design**: Clean, dark-themed UI optimized for mobile
+
+## Tech Stack
+
+- **Framework**: Next.js 16 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **WebSocket**: Native WebSocket API
+- **State Management**: React Hooks
+
+## Project Structure
+```
+hyperliquid_widget/
+├── app/
+│   ├── page.tsx                 # Main application component
+│   ├── layout.tsx
+│   └── globals.css              # Global styles and animations
+├── components/
+│   ├── OrderBook/
+│   │   ├── OrderBookHeader.tsx  # Header with controls
+│   │   ├── OrderBookTable.tsx   # Order book display
+│   │   ├── OrderBookRow.tsx     # Individual order book row
+│   │   ├── SpreadIndicator.tsx  # Bid-ask spread display
+│   │   └── TradesTable.tsx      # Trades list display
+│   └── ui/
+│       ├── Dropdown.tsx         # Reusable dropdown component
+│       └── TabSelector.tsx      # Tab switching component
+├── hooks/
+│   ├── useWebSocket.tsx         # WebSocket connection management
+│   ├── useOrderBookState.tsx    # Order book state and aggregation
+│   └── useTrades.tsx            # Trades state management
+└── lib/
+    ├── types.ts                 # TypeScript type definitions
+    ├── constants.ts             # App constants
+    ├── utils.ts                 # Utility functions
+    └── orderbook.ts             # Order book aggregation logic
+```
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd hyperliquid_widget
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## Learn More
+## Key Components
 
-To learn more about Next.js, take a look at the following resources:
+### Hooks
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**`useWebSocket`**
+- Manages WebSocket connection to Hyperliquid API
+- Handles subscriptions for order book and trades
+- Auto-reconnects on disconnect
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**`useOrderBookState`**
+- Processes raw order book data
+- Aggregates price levels based on grouping
+- Tracks flash animations for new/updated levels
+- Calculates spread and depth visualization
 
-## Deploy on Vercel
+**`useTrades`**
+- Processes incoming trades
+- Maintains list of recent trades (max 50)
+- Formats trade data for display
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Components
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**`OrderBookHeader`**
+- Asset selector (BTC/ETH)
+- Price grouping dropdown
+- Tab selector (Orders/Trades)
+- Denomination toggle (Asset/USDC)
+- Connection status indicator
+
+**`OrderBookTable`**
+- Displays asks (sell orders) at top
+- Shows bid-ask spread
+- Displays bids (buy orders) at bottom
+- Visual depth bars showing cumulative size
+
+**`TradesTable`**
+- Scrollable list of recent trades
+- Color-coded by side (green=buy, red=sell)
+- Shows price, size, and timestamp
+
+## API
+
+The application connects to Hyperliquid's WebSocket API:
+
+**Endpoint**: `wss://api.hyperliquid.xyz/ws`
+
+**Subscriptions**:
+- `l2Book` - Level 2 order book data
+- `trades` - Recent trades
+
+## Customization
+
+### Price Grouping Options
+
+Edit `lib/constants.ts`:
+```typescript
+export const BTC_GROUP_OPTIONS = [1, 2, 5, 10];
+export const ETH_GROUP_OPTIONS = [0.1, 0.2, 0.5, 1];
+```
+
+### Number of Rows
+```typescript
+export const NUM_ROWS = 15; // Rows displayed per side
+```
+
+### Styling
+
+Modify Tailwind classes in components or add custom CSS in `app/globals.css`
+
+## Performance Optimizations
+
+- `useMemo` for expensive calculations
+- `useCallback` for stable function references
+- Fixed row rendering to prevent layout shifts
+- Efficient price aggregation algorithm
+- Debounced flash animations
+
+## Browser Support
+
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+
+## Known Issues
+
+- WebSocket connection requires stable internet
+- Large price groupings may hide some orders
+
+
+## License
+
+MIT
+
+
+## Acknowledgments
+
+- Hyperliquid for providing the WebSocket API
+- Next.js team for the excellent framework
