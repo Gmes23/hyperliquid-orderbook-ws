@@ -17,17 +17,17 @@ export default function OrderBook() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   // Custom hooks
-  const { 
-    fixedBids, 
-    fixedAsks, 
-    spread, 
-    maxBidTotal, 
+  const {
+    fixedBids,
+    fixedAsks,
+    spread,
+    maxBidTotal,
     maxAskTotal,
-    processOrderBook 
+    processOrderBook
   } = useOrderBookState({ symbol, priceGrouping });
-  
+
   const { trades, processTrades, resetTrades } = useTrades({ symbol });
-  
+
   const { isConnected } = useWebSocket({
     symbol,
     onOrderBookUpdate: processOrderBook,
@@ -42,6 +42,16 @@ export default function OrderBook() {
 
   return (
     <div className="min-h-screen bg-[#0a0e13] text-white p-4">
+      {/* GitHub button - fixed position */}
+      <a href="https://github.com/Gmes23/hyperliquid-orderbook-ws"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed top-4 right-4 p-2 rounded-lg bg-[#1a1f2e] hover:bg-[#252b3b] border border-gray-700 hover:border-gray-600 transition-all duration-200 z-50 hidden sm:block"
+        aria-label="View source on GitHub"
+      >
+        <h1>Github Link/Repo</h1>
+      </a>
+
       <div className="max-w-md mx-auto">
         <OrderBookHeader
           symbol={symbol}
@@ -82,6 +92,18 @@ export default function OrderBook() {
           ) : (
             <span className="text-red-500">● Disconnected</span>
           )}
+          <div className="sm:hidden mt-2">
+            <a
+              href="https://github.com/Gmes23/hyperliquid-orderbook-ws"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block p-2 rounded-lg bg-[#1a1f2e] hover:bg-[#252b3b] border border-gray-700 hover:border-gray-600 transition-all duration-200 text-white min-w-full"
+              aria-label="View source on GitHub"
+            >
+              Github Link / Repo
+            </a>
+          </div>
+
         </div>
       </div>
     </div>
