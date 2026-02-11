@@ -123,7 +123,7 @@ export function useOrderBookState({ symbol, priceGrouping }: UseOrderBookStatePr
   const fixedAsks = useMemo(() => {
     const rows: (ProcessedLevel | null)[] = Array(NUM_ROWS).fill(null);
     asks.forEach((ask, i) => {
-      rows[NUM_ROWS - 1 - i] = ask;
+      rows[i] = ask;
     });
     return rows;
   }, [asks]);
